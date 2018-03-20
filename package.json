@@ -17,6 +17,6 @@
   },
   "homepage": "https://github.com/atesgoral/acb#readme",
   "dependencies": {
-    "binary": "^0.3.0"
+    "stream-parser": "^0.3.1"
   }
 }
