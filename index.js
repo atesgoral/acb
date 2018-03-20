@@ -9,10 +9,17 @@ const colorSpaceMap = {
 
 const componentNormalizerMap = {
   RGB: (components) => components,
-  CMYK: (components) => components.map((component) => Math.round((255 - component) / 2.55)),
-  Lab: (components) => [
-
-  ]
+  CMYK: (components) => ({
+    c: Math.round((255 - components[0]) / 2.55),
+    m: Math.round((255 - components[1]) / 2.55),
+    y: Math.round((255 - components[2]) / 2.55),
+    k: Math.round((255 - components[3]) / 2.55)
+  }),
+  Lab: (components) => ({
+    l: Math.round(components[0] / 2.55),
+    a: components[1] - 128,
+    b: components[2] - 128
+  })
 };
 
 class AcbParser extends Transform {
