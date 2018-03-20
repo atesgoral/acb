@@ -1,4 +1,4 @@
-const Transform = require('stream').Transform;
+const Writable = require('stream').Writable;
 const Parser = require('stream-parser');
 
 const colorSpaceMap = {
@@ -22,7 +22,7 @@ const componentNormalizerMap = {
   })
 };
 
-class AcbParser extends Transform {
+class AcbParser extends Writable {
   constructor() {
     super();
 
