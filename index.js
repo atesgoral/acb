@@ -1,4 +1,4 @@
-const Writable = require('stream').Writable;
+const Transform = require('stream').Transform;
 const Parser = require('stream-parser');
 
 const colorSpaceMap = {
@@ -22,9 +22,9 @@ const componentNormalizerMap = {
   })
 };
 
-class AcbParser extends Writable {
-  constructor() {
-    super();
+class AcbParser extends Transform {
+  constructor(options) {
+    super(options);
 
     this.colorBook = {};
 
@@ -32,31 +32,31 @@ class AcbParser extends Writable {
   }
 
   readInt8(cb) {
-    this._bytes(1, (buffer) => {
-      cb.call(this, buffer.readUInt8(0));
+    this._bytes(1, (buffer, output) => {
+      cb.call(this, buffer.readUInt8(0), output);
     });
   }
 
   readInt16(cb) {
-    this._bytes(2, (buffer) => {
-      cb.call(this, buffer.readUInt16BE(0));
+    this._bytes(2, (buffer, output) => {
+      cb.call(this, buffer.readUInt16BE(0), output);
     });
   }
 
   readInt32(cb) {
-    this._bytes(4, (buffer) => {
-      cb.call(this, buffer.readUInt32BE(0));
+    this._bytes(4, (buffer, output) => {
+      cb.call(this, buffer.readUInt32BE(0), output);
     });
   }
 
   readString(cb) {
-    this.readInt32((length) => {
+    this.readInt32((length, output) => {
       if (length) {
-        this._bytes(length * 2, (buffer) => {
-          cb.call(this, buffer.swap16().toString('utf16le'));
+        this._bytes(length * 2, (buffer, output) => {
+          cb.call(this, buffer.swap16().toString('utf16le'), output);
         });
       } else {
-        cb('');
+        cb('', output);
       }
     });
   }
@@ -103,55 +103,65 @@ class AcbParser extends Writable {
 
   onSignature(buffer, output) {
     this.colorBook.signature = buffer.toString('ascii');
-    this.readInt16(this.onVersion);
+
+    if (this.colorBook.signature === '8BCB') {
+      this.readInt16(this.onVersion);
+    } else {
+      output(new Error('Not an ACB file'));
+    }
   }
 
-  onVersion(version) {
+  onVersion(version, output) {
     this.colorBook.version = version;
-    this.readInt16(this.onId);
+
+    if (this.colorBook.version === 1) {
+      this.readInt16(this.onId);
+    } else {
+      output(new Error('Invalid version'));
+    }
   }
 
-  onId(id) {
+  onId(id, output) {
     this.colorBook.id = id;
     this.readString(this.onTitle);
   }
 
-  onTitle(title) {
+  onTitle(title, output) {
     this.colorBook.title = title;
     this.readString(this.onColorNamePrefix);
   }
 
-  onColorNamePrefix(colorNamePrefix) {
+  onColorNamePrefix(colorNamePrefix, output) {
     this.colorBook.colorNamePrefix = colorNamePrefix;
     this.readString(this.onColorNameSuffix);
   }
 
-  onColorNameSuffix(colorNameSuffix) {
+  onColorNameSuffix(colorNameSuffix, output) {
     this.colorBook.colorNameSuffix = colorNameSuffix;
     this.readString(this.onDescription);
   }
 
-  onDescription(description) {
+  onDescription(description, output) {
     this.colorBook.description = description;
     this.readInt16(this.onColorCount);
   }
 
-  onColorCount(colorCount) {
+  onColorCount(colorCount, output) {
     this.colorBook.colorCount = colorCount;
     this.readInt16(this.onPageSize);
   }
 
-  onPageSize(pageSize) {
+  onPageSize(pageSize, output) {
     this.colorBook.pageSize = pageSize;
     this.readInt16(this.onPageMidpoint);
   }
 
-  onPageMidpoint(pageMidPoint) {
+  onPageMidpoint(pageMidPoint, output) {
     this.colorBook.pageMidPoint = pageMidPoint;
     this.readInt16(this.onColorSpace);
   }
 
-  onColorSpace(colorSpace) {
+  onColorSpace(colorSpace, output) {
     this.colorBook.colorSpace = colorSpaceMap[colorSpace];
     this.readColors(this.onColors);
   }
@@ -164,7 +174,7 @@ class AcbParser extends Writable {
   onProduction(production) {
     this.colorBook.isSpot = production.toString('ascii') === 'spflspot';
     this.emit('done', this.colorBook);
-    this._passthrough(Infinity);
+    //this._passthrough(Infinity);
   }
 }
 
@@ -173,10 +183,15 @@ Parser(AcbParser.prototype);
 const parser = new AcbParser();
 
 parser.on('done', function (book) {
-  console.log('Got book', JSON.stringify(book, null, 2));
+  console.log('done');
+  //console.log('Got book:', JSON.stringify(book, null, 2));
 });
 
-process.stdin.pipe(parser).pipe(process.stdout);
+parser.on('error', function (error) {
+  console.error('Got error:', error.message);
+});
+
+process.stdin.pipe(parser);//.pipe(process.stdout);
 process.stdin.resume();
 
 // exports.encode = (colorBook) => {
