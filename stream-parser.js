@@ -9,43 +9,43 @@ class StreamParser extends Writable {
   }
 
   queueRead(count, resolve) {
-    console.log('queueRead', count);
+    // console.log('queueRead', count);
 
     this.readQueue.push({ count, resolve });
 
     if (this.readQueueResolver) {
-      console.log('resolving read queue');
+      // console.log('resolving read queue');
       this.readQueueResolver(this.readQueue); // @todo need to reset?
       this.readQueueResolver = null;
     }
   }
 
   readQueued() {
-    console.log('readQueued');
+    // console.log('readQueued');
 
     return new Promise((resolve, reject) => {
       if (this.readQueue.length) {
-        console.log('resolving');
+        // console.log('resolving');
         resolve(this.readQueue);
       } else {
-        console.log('setting resolver');
+        // console.log('setting resolver');
         this.readQueueResolver = resolve;
       }
     });
   }
 
   async depleteChunk(chunk) {
-    console.log('depleteChunk');
+    // console.log('depleteChunk');
 
     // let c = 0;
 
     while (chunk.length) {
       // c++;
 
-      console.log('awaiting queue');
+      // console.log('awaiting queue');
       // const queue = await this.readQueued();
       await this.readQueued().then((queue) => {
-        console.log('got queued reads', queue.length);
+        // console.log('got queued reads', queue.length);
 
         const read = queue.shift(); // @todo loop over queue instead of awaiting again
 
@@ -63,7 +63,7 @@ class StreamParser extends Writable {
   }
 
   _write(chunk, encoding, callback) {
-    console.log('_write', chunk.length);
+    // console.log('_write', chunk.length);
 
     this.depleteChunk(chunk)
       .then(callback)
