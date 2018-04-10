@@ -96,17 +96,17 @@ class AcbParser extends StreamParser {
       throw new Error('Invalid version');
     }
 
-    // book.id = await this.readUInt16BE();
-    // book.title = await this.readString();
-    // book.colorNamePrefix = await this.readString();
-    // book.colorNameSuffix = await this.readString();
-    // book.description = await this.readString();
-    // book.colorCount = await this.readUInt16BE();
-    // book.pageSize = await this.readUInt16BE();
-    // book.pageMidPoint = await this.readUInt16BE();
-    // book.colorSpace = await this.readColorSpace();
-    // book.colors = await this.readColors();
-    // book.isSpot = await this.readIsSpot();
+    book.id = await this.readUInt16BE();
+    book.title = await this.readString();
+    book.colorNamePrefix = await this.readString();
+    book.colorNameSuffix = await this.readString();
+    book.description = await this.readString();
+    book.colorCount = await this.readUInt16BE();
+    book.pageSize = await this.readUInt16BE();
+    book.pageMidPoint = await this.readUInt16BE();
+    book.colorSpace = await this.readColorSpace();
+    book.colors = await this.readColors(book.colorCount, book.colorSpace);
+    book.isSpot = await this.readIsSpot();
 
     return book;
   }
@@ -115,7 +115,9 @@ class AcbParser extends StreamParser {
 const parser = new AcbParser();
 
 parser.on('book', (book) => {
-  console.log('Got book', book);
+  console.log('Got book');
+  // console.dir(book);
+  console.log(JSON.stringify(book));
 });
 
 parser.on('error', (error) => {
