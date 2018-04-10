@@ -29,6 +29,8 @@ class AcbParser extends StreamParser {
     if (!colorSpace) {
       throw new Error('Unknown color space');
     }
+
+    return colorSpace;
   }
 
   async readComponents(colorSpace) {

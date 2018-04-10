@@ -15,7 +15,8 @@ class StreamParser extends Writable {
 
     if (this.readQueueResolver) {
       console.log('resolving read queue');
-      this.readQueueResolver(); // @todo need to reset?
+      this.readQueueResolver(this.readQueue); // @todo need to reset?
+      this.readQueueResolver = null;
     }
   }
 
@@ -76,7 +77,7 @@ class StreamParser extends Writable {
   // @todo implement entire Buffer interface?
   read(count) {
     return new Promise((resolve, reject) => {
-      this.queueRead(count, resolve); // @todo return Promise from that instead?
+      this.queueRead(count, resolve); // @todo return Promise from queueRead instead?
     });
   }
 
@@ -89,7 +90,7 @@ class StreamParser extends Writable {
   }
 
   async readUInt32BE() {
-    return (await this.read(2)).readUInt32BE(0);
+    return (await this.read(4)).readUInt32BE(0);
   }
 
   // readUInt16BE() {
