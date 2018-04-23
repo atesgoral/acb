@@ -9,6 +9,18 @@ class AcbParser extends StreamParser {
       .catch((error) => this.emit('error', error));
   }
 
+  async readUInt8() {
+    return (await this.read(1)).readUInt8(0);
+  }
+
+  async readUInt16BE() {
+    return (await this.read(2)).readUInt16BE(0);
+  }
+
+  async readUInt32BE() {
+    return (await this.read(4)).readUInt32BE(0);
+  }
+
   async readString() {
     const length = await this.readUInt32BE();
 

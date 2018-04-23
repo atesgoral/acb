@@ -74,28 +74,11 @@ class StreamParser extends Writable {
 
   // @todo implement _destroy
 
-  // @todo implement entire Buffer interface?
   read(count) {
     return new Promise((resolve, reject) => {
       this.queueRead(count, resolve); // @todo return Promise from queueRead instead?
     });
   }
-
-  async readUInt8() {
-    return (await this.read(1)).readUInt8(0);
-  }
-
-  async readUInt16BE() {
-    return (await this.read(2)).readUInt16BE(0);
-  }
-
-  async readUInt32BE() {
-    return (await this.read(4)).readUInt32BE(0);
-  }
-
-  // readUInt16BE() {
-  //   return this.read(2).then((buffer) => buffer.readUInt16BE(0));
-  // }
 
   // @todo to signal no need to deplete latest chunk
   // pass thru?
