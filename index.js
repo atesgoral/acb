@@ -1,6 +1,6 @@
-const StreamParser = require('./stream-parser');
+const StreamReader = require('@atesgoral/stream-reader');
 
-class AcbParser extends StreamParser {
+class AcbParser extends StreamReader {
   constructor(options) {
     super(options);
 
