@@ -1,140 +1,179 @@
-const StreamReader = require('@atesgoral/stream-reader');
+import Parser from 'stream-parser';
+import {Transform} from 'stream';
 
-class AcbParser extends StreamReader {
+class AcbParser extends Transform {
   constructor(options) {
     super(options);
 
-    this.readBook()
-      .then((book) => this.emit('book', book))
-      .catch((error) => this.emit('error', error));
+    this._book = {};
+
+    this._readAscii(4, this._onSignature);
   }
 
-  async readUInt8() {
-    return (await this.read(1)).readUInt8(0);
-  }
-
-  async readUInt16BE() {
-    return (await this.read(2)).readUInt16BE(0);
-  }
-
-  async readUInt32BE() {
-    return (await this.read(4)).readUInt32BE(0);
-  }
-
-  async readString() {
-    const length = await this.readUInt32BE();
-
-    if (length) {
-      return (await this.read(length * 2)).swap16().toString('utf16le');
-    } else {
-      return '';
+  _onSignature(signature) {
+    if (signature !== '8BCB') {
+      return this.emit('error', new Error(`Not an ACB file: ${signature}`));
     }
+
+    this._book.signature = signature;
+    this._readUInt16BE(this._onVersion);
   }
 
-  async readColorSpace() {
+  _onVersion(version) {
+    if (version !== 1) {
+      return this.emit('error', new Error(`Invalid version: ${version}`));
+    }
+
+    this._book.version = version;
+    this._readUInt16BE(this._onId);
+  }
+
+  _onId(id) {
+    this._book.id = id;
+    this._readString(this._onTitle);
+  }
+
+  _onTitle(title) {
+    this._book.title = title;
+    this._readString(this._onColorNamePrefix);
+  }
+
+  _onColorNamePrefix(colorNamePrefix) {
+    this._book.colorNamePrefix = colorNamePrefix;
+    this._readString(this._onColorNameSuffix);
+  }
+
+  _onColorNameSuffix(colorNameSuffix) {
+    this._book.colorNameSuffix = colorNameSuffix;
+    this._readString(this._onDescription);
+  }
+
+  _onDescription(description) {
+    this._book.description = description;
+    this._readUInt16BE(this._onColorCount);
+  }
+
+  _onColorCount(colorCount) {
+    this._book.colorCount = colorCount;
+    this._readUInt16BE(this._onPageSize);
+  }
+
+  _onPageSize(pageSize) {
+    this._book.pageSize = pageSize;
+    this._readUInt16BE(this._onPageMidPoint);
+  }
+
+  _onPageMidPoint(pageMidPoint) {
+    this._book.pageMidPoint = pageMidPoint;
+    this._readUInt16BE(this._onColorSpaceId);
+  }
+
+  _onColorSpaceId(colorSpaceId) {
     const colorSpace = {
       0: 'RGB',
       2: 'CMYK',
       7: 'Lab'
-    }[await this.readUInt16BE()]
+    }[colorSpaceId]
 
     if (!colorSpace) {
-      throw new Error('Unknown color space');
+      return this.emit('error', new Error(`Unknown color space: ${colorSpaceId}`));
     }
 
-    return colorSpace;
+    this._book.colorSpace = colorSpace;
+    this._book.colors = [];
+    this._checkReadNextColor(this._onColor);
   }
 
-  async readComponents(colorSpace) {
-    switch (colorSpace) {
-    case 'RGB':
-      return {
-        r: await this.readUInt8(),
-        g: await this.readUInt8(),
-        b: await this.readUInt8()
-      };
-    case 'CMYK':
-      return {
-        c: Math.round((255 - await this.readUInt8()) / 2.55),
-        m: Math.round((255 - await this.readUInt8()) / 2.55),
-        y: Math.round((255 - await this.readUInt8()) / 2.55),
-        k: Math.round((255 - await this.readUInt8()) / 2.55)
-      };
-    case 'Lab':
-      return {
-        l: Math.round(await this.readUInt8() / 2.55),
-        a: await this.readUInt8() - 128,
-        b: await this.readUInt8() - 128
-      };
+  _checkReadNextColor() {
+    if (this._book.colors.length < this._book.colorCount) {
+      this._readColor((color) => {
+        this._book.colors.push(color);
+        this._checkReadNextColor();
+      });
+    } else {
+      this._readAscii(8, this._onSpotId);
     }
   }
 
-  async readColor(colorSpace) {
+  _onSpotId(spotId) {
+    this._book.isSpot = spotId === 'spflspot';
+    this.emit('book', this._book);
+  }
+
+  _readColor(callback) {
     const color = {};
 
-    color.name = await this.readString();
-    color.code = (await this.read(6)).toString('ascii');
-    color.components = await this.readComponents(colorSpace);
+    this._readString((name) => {
+      color.name = name;
 
-    return color;
+      this._readAscii(6, (code) => {
+        color.code = code;
+
+        this._readComponents((components) => {
+          color.components = components;
+
+          callback(color);
+        });
+      });
+    });
   }
 
-  async readColors(colorCount, colorSpace) {
-    const colors = [];
-
-    while (colors.length < colorCount) {
-      colors.push(await this.readColor(colorSpace));
+  _readComponents(callback) {
+    switch (this._book.colorSpace) {
+    case 'RGB':
+      this._bytes(3, (chunk) => callback({
+        r: chunk.readUInt8(0),
+        g: chunk.readUInt8(1),
+        b: chunk.readUInt8(2)
+      }));
+      break;
+    case 'CMYK':
+      this._bytes(4, (chunk) => callback({
+        c: Math.round((255 - chunk.readUInt8(0)) / 2.55),
+        m: Math.round((255 - chunk.readUInt8(1)) / 2.55),
+        y: Math.round((255 - chunk.readUInt8(2)) / 2.55),
+        k: Math.round((255 - chunk.readUInt8(3)) / 2.55)
+      }));
+      break;
+    case 'Lab':
+      this._bytes(3, (chunk) => callback({
+        l: Math.round(chunk.readUInt8(0) / 2.55),
+        a: chunk.readUInt8(1) - 128,
+        b: chunk.readUInt8(2) - 128
+      }));
+      break;
     }
-
-    return colors;
   }
 
-  async readIsSpot() {
-    return (await this.read(8)).toString('ascii') === 'spflspot';
+  _readAscii(count, callback) {
+    this._bytes(count, (chunk) => callback.call(this, chunk.toString('ascii')));
   }
 
-  async readBook() {
-    const book = {};
+  _readUInt16BE(callback) {
+    this._bytes(2, (chunk) => callback.call(this, chunk.readUInt16BE(0)));
+  }
 
-    book.signature = (await this.read(4)).toString('ascii');
+  _readUInt32BE(callback) {
+    this._bytes(4, (chunk) => callback.call(this, chunk.readUInt32BE(0)));
+  }
 
-    if (book.signature !== '8BCB') {
-      throw new Error('Not an ACB file');
-    }
-
-    book.version = await this.readUInt16BE();
-
-    if (book.version !== 1) {
-      throw new Error('Invalid version');
-    }
-
-    book.id = await this.readUInt16BE();
-    book.title = await this.readString();
-    book.colorNamePrefix = await this.readString();
-    book.colorNameSuffix = await this.readString();
-    book.description = await this.readString();
-    book.colorCount = await this.readUInt16BE();
-    book.pageSize = await this.readUInt16BE();
-    book.pageMidPoint = await this.readUInt16BE();
-    book.colorSpace = await this.readColorSpace();
-    book.colors = await this.readColors(book.colorCount, book.colorSpace);
-    book.isSpot = await this.readIsSpot();
-
-    return book;
+  _readString(callback) {
+    this._readUInt32BE((length) => {
+      if (length) {
+        this._bytes(length * 2, (chunk) => callback.call(this, chunk.swap16().toString('utf16le')));
+      } else {
+        callback.call(this, '');
+      }
+    });
   }
 }
 
+Parser(AcbParser.prototype);
+
 const parser = new AcbParser();
 
-parser.on('book', (book) => {
-  console.log('Got book');
-  // console.dir(book);
-  console.log(JSON.stringify(book));
-});
+parser.on('book', (book) => console.log(JSON.stringify(book)));
+parser.on('error', (error) => console.error(error.message));
 
-parser.on('error', (error) => {
-  console.error('Got error', error);
-});
-
-process.stdin.pipe(parser);
-process.stdin.resume();
+process.stdin.pipe(parser).pipe(process.stdout);
+// process.stdin.resume();
