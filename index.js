@@ -1,7 +1,7 @@
 import Parser from 'stream-parser';
-import {Transform} from 'stream';
+import {Transform, Readable} from 'stream';
 
-class AcbParser extends Transform {
+class AcbStreamDecoder extends Transform {
   constructor(options) {
     super(options);
 
@@ -121,26 +121,17 @@ class AcbParser extends Transform {
   _readComponents(callback) {
     switch (this._book.colorSpace) {
     case 'RGB':
-      this._bytes(3, (chunk) => callback({
-        r: chunk.readUInt8(0),
-        g: chunk.readUInt8(1),
-        b: chunk.readUInt8(2)
-      }));
+      this._bytes(3, (chunk) => callback(Array.from(chunk)));
       break;
     case 'CMYK':
-      this._bytes(4, (chunk) => callback({
-        c: Math.round((255 - chunk.readUInt8(0)) / 2.55),
-        m: Math.round((255 - chunk.readUInt8(1)) / 2.55),
-        y: Math.round((255 - chunk.readUInt8(2)) / 2.55),
-        k: Math.round((255 - chunk.readUInt8(3)) / 2.55)
-      }));
+      this._bytes(4, (chunk) => callback(Array.from(chunk).map((c) => Math.round((255 - c) / 2.55))));
       break;
     case 'Lab':
-      this._bytes(3, (chunk) => callback({
-        l: Math.round(chunk.readUInt8(0) / 2.55),
-        a: chunk.readUInt8(1) - 128,
-        b: chunk.readUInt8(2) - 128
-      }));
+      this._bytes(3, (chunk) => callback([
+        Math.round(chunk[0] / 2.55),
+        chunk[1] - 128,
+        chunk[2] - 128
+      ]));
       break;
     }
   }
@@ -150,11 +141,11 @@ class AcbParser extends Transform {
   }
 
   _readUInt16BE(callback) {
-    this._bytes(2, (chunk) => callback.call(this, chunk.readUInt16BE(0)));
+    this._bytes(2, (chunk) => callback.call(this, chunk.readUInt16BE()));
   }
 
   _readUInt32BE(callback) {
-    this._bytes(4, (chunk) => callback.call(this, chunk.readUInt32BE(0)));
+    this._bytes(4, (chunk) => callback.call(this, chunk.readUInt32BE()));
   }
 
   _readString(callback) {
@@ -168,12 +159,108 @@ class AcbParser extends Transform {
   }
 }
 
-Parser(AcbParser.prototype);
+Parser(AcbStreamDecoder.prototype);
 
-const parser = new AcbParser();
+const Chunk = {
+  fromAscii: (value) => Buffer.from(value, 'ascii'),
+  fromUInt16BE: (value) => {
+    const chunk = Buffer.allocUnsafe(2);
+    chunk.writeUInt16BE(value);
+    return chunk;
+  },
+  fromUInt32BE: (value) => {
+    const chunk = Buffer.allocUnsafe(4);
+    chunk.writeUInt32BE(value);
+    return chunk;
+  },
+  fromString: (value) => {
+    const chunk = Buffer.allocUnsafe(4 + value.length * 2);
+    chunk.write(value, 4, 'utf16le');
+    chunk.swap16();
+    chunk.writeUInt32BE(value.length);
+    return chunk;
+  }
+}
 
-parser.on('book', (book) => console.log(JSON.stringify(book)));
-parser.on('error', (error) => console.error(error.message));
+function* encodeAcb(book) {
+  yield Chunk.fromAscii(book.signature);
+  yield Chunk.fromUInt16BE(book.version);
+  yield Chunk.fromUInt16BE(book.id);
+  yield Chunk.fromString(book.title);
+  yield Chunk.fromString(book.colorNamePrefix);
+  yield Chunk.fromString(book.colorNameSuffix);
+  yield Chunk.fromString(book.description);
+  yield Chunk.fromUInt16BE(book.colorCount);
+  yield Chunk.fromUInt16BE(book.pageSize);
+  yield Chunk.fromUInt16BE(book.pageMidPoint);
 
-process.stdin.pipe(parser).pipe(process.stdout);
+  const colorSpaceId = {
+    'RGB': 0,
+    'CMYK': 2,
+    'Lab': 7
+  }[book.colorSpace];
+
+  yield Chunk.fromUInt16BE(colorSpaceId);
+
+  yield* book.colors.map((color) => {
+    const chunks = [];
+
+    chunks.push(
+      Chunk.fromString(color.name),
+      Chunk.fromAscii(color.code)
+    );
+
+    switch (book.colorSpace) {
+    case 'RGB':
+      chunks.push(Buffer.from(color.components));
+      break;
+    case 'CMYK':
+      chunks.push(Buffer.from(color.components.map((c) => 255 - Math.round(c * 2.55))));
+      break;
+    case 'Lab':
+      chunks.push(Buffer.from([
+        Math.round(color.components[0] * 2.55),
+        color.components[1] + 128,
+        color.components[2] + 128
+      ]));
+      break;
+    }
+
+    return Buffer.concat(chunks);
+  });
+
+  yield Chunk.fromAscii(book.isSpot ? 'spflspot' : 'spflproc');
+}
+
+const book = {
+  signature: '8BCB',
+  version: 1,
+  id: 42,
+  title: 'Test book',
+  colorNamePrefix: 'TEST ',
+  colorNameSuffix: ' COLOR',
+  description: 'Booky McBookface',
+  colorCount: 3,
+  pageSize: 3,
+  pageMidPoint: 1,
+  colorSpace: 'RGB',
+  colors: [
+    {name: 'Red', code: 'RED   ', components: [255, 0, 0]},
+    {name: 'Green', code: 'GREEN ', components: [0, 255, 0]},
+    {name: 'Blue', code: 'BLUE  ', components: [0, 0, 255]}
+  ],
+  isSpot: false
+};
+
+const readable = Readable.from(encodeAcb(book));
+
+// readable.pipe(process.stdout);
+
+const decoder = new AcbStreamDecoder();
+
+decoder.on('book', (book) => console.log(JSON.stringify(book)));
+decoder.on('error', (error) => console.error(error));
+
+readable.pipe(decoder).pipe(process.stdout);
+// process.stdin.pipe(decoder).pipe(process.stdout);
 // process.stdin.resume();
