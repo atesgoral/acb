@@ -1,5 +1,5 @@
 {
-  "name": "acb",
+  "name": "@atesgoral/acb",
   "version": "0.0.1",
   "description": "Adobe Photoshop Color Book (ACB) encoder and decoder",
   "keywords": ["color", "book", "acb", "photoshop", "palette", "stream", "encode", "decode", "parse", "format"],

@@ -29,7 +29,7 @@ const book = {
 ### Decoding from the standard input stream
 
 ```js
-import {AcbStreamDecoder} from 'acb';
+import {AcbStreamDecoder} from '@atesgoral/acb';
 
 const decoder = new AcbStreamDecoder();
 
@@ -47,7 +47,7 @@ process.stdin.pipe(decoder).pipe(process.stdout);
 ```js
 import {Readable} from 'stream';
 
-import {AcbStreamDecoder} from 'acb';
+import {AcbStreamDecoder} from '@atesgoral/acb';
 
 const decoder = new AcbStreamDecoder();
 
@@ -71,7 +71,7 @@ Readable.from(buffer).pipe(decoder).pipe(process.stdout);
 ```js
 import {Readable} from 'stream';
 
-import {encodeAcb} from 'acb';
+import {encodeAcb} from '@atesgoral/acb';
 
 const book = {
   // ...
@@ -84,7 +84,7 @@ readable.pipe(process.stdout);
 ### Encoding into a single Buffer
 
 ```js
-import {encodeAcb} from 'acb';
+import {encodeAcb} from '@atesgoral/acb';
 
 const book = {
   // ...
