@@ -1,7 +1,8 @@
 {
   "name": "acb",
   "version": "0.0.1",
-  "description": "",
+  "description": "Adobe Photoshop Color Book (ACB) encoder and decoder",
+  "keywords": ["color", "book", "acb", "photoshop", "palette", "stream", "encode", "decode", "parse", "format"],
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -11,7 +12,7 @@
     "type": "git",
     "url": "git+https://github.com/atesgoral/acb.git"
   },
-  "author": "Ates Goral <ates@magnetiq.com> (http://magnetiq.com/)",
+  "author": "Ates Goral <ates@magnetiq.com> (https://magnetiq.ca/)",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/atesgoral/acb/issues"
