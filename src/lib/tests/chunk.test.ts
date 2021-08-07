@@ -178,4 +178,58 @@ describe('toComponents', () => {
       expect(components).toEqual(expected);
     });
   });
+
+  describe('comprehensive rounding tests', () => {
+    describe('RGB', () => {
+      test('preserves component values', () => {
+        let components = null;
+        let chunk = null;
+        let expected = null;
+
+        for (let component = 0; component <= 255; component++) {
+          expected = [component, component, component];
+          chunk = Chunk.fromComponents(expected, 'RGB');
+          components = Chunk.toComponents(chunk, 'RGB');
+          expect(components).toEqual(expected);
+        }
+      });
+    });
+
+    describe('CMYK', () => {
+      test('preserves component values', () => {
+        let components = null;
+        let chunk = null;
+        let expected = null;
+
+        for (let component = 0; component <= 100; component++) {
+          expected = [component, component, component, component];
+          chunk = Chunk.fromComponents(expected, 'CMYK');
+          components = Chunk.toComponents(chunk, 'CMYK');
+          expect(components).toEqual(expected);
+        }
+      });
+    });
+
+    describe('Lab', () => {
+      test('preserves component values', () => {
+        let components = null;
+        let chunk = null;
+        let expected = null;
+
+        for (let component = 0; component <= 100; component++) {
+          expected = [component, 0, 0];
+          chunk = Chunk.fromComponents(expected, 'Lab');
+          components = Chunk.toComponents(chunk, 'Lab');
+          expect(components).toEqual(expected);
+        }
+
+        for (let component = -128; component <= 127; component++) {
+          expected = [0, component, component];
+          chunk = Chunk.fromComponents(expected, 'Lab');
+          components = Chunk.toComponents(chunk, 'Lab');
+          expect(components).toEqual(expected);
+        }
+      });
+    });
+  });
 });
