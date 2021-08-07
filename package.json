@@ -1,12 +1,26 @@
 {
   "name": "@atesgoral/acb",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Adobe Photoshop Color Book (ACB) encoder and decoder",
-  "keywords": ["color", "book", "acb", "photoshop", "palette", "stream", "encode", "decode", "parse", "format"],
-  "main": "index.js",
-  "type": "module",
+  "keywords": [
+    "color",
+    "book",
+    "acb",
+    "photoshop",
+    "palette",
+    "stream",
+    "encode",
+    "decode",
+    "parse",
+    "format"
+  ],
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "rollup --config"
   },
   "repository": {
     "type": "git",
@@ -20,5 +34,8 @@
   "homepage": "https://github.com/atesgoral/acb#readme",
   "dependencies": {
     "stream-parser": "^0.3.1"
+  },
+  "devDependencies": {
+    "rollup": "^2.56.0"
   }
 }
