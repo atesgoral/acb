@@ -3,6 +3,7 @@ import {Transform, TransformOptions} from 'stream';
 import Parser from 'stream-parser';
 
 import type {ColorSpace, Color, ColorBook} from './types';
+import * as Chunk from './chunk';
 
 const IdToColorSpace: Record<number, ColorSpace> = {
   0: 'RGB',
@@ -147,25 +148,9 @@ export class AcbStreamDecoder extends Transform implements AcbStreamDecoder {
   }
 
   private readComponents(callback: (components: number[]) => void) {
-    switch (this.book.colorSpace) {
-      case 'RGB':
-        this._bytes(3, (chunk) => callback(Array.from(chunk)));
-        break;
-      case 'CMYK':
-        this._bytes(4, (chunk) =>
-          callback(Array.from(chunk).map((c) => Math.round((255 - c) / 2.55)))
-        );
-        break;
-      case 'Lab':
-        this._bytes(3, (chunk) =>
-          callback([
-            Math.round(chunk[0] / 2.55),
-            chunk[1] - 128,
-            chunk[2] - 128,
-          ])
-        );
-        break;
-    }
+    this._bytes(this.book.colorSpace === 'CMYK' ? 4 : 3, (chunk) =>
+      callback(Chunk.toComponents(chunk, this.book.colorSpace))
+    );
   }
 
   private readAscii(count: number, callback: (value: string) => void) {
