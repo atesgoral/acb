@@ -10,7 +10,14 @@ const IdToColorSpace: Record<number, ColorSpace> = {
   7: 'Lab'
 };
 
-export class AcbStreamDecoder extends Transform {
+export interface AcbStreamDecoder extends Transform {
+  on(event: 'book', callback: (book: ColorBook) => void): this;
+  on(event: string | symbol, listener: (...args: any[]) => void): this;
+  once(event: 'book', callback: (book: ColorBook) => void): this;
+  once(event: string | symbol, listener: (...args: any[]) => void): this;
+}
+
+export class AcbStreamDecoder extends Transform implements AcbStreamDecoder {
   private book: ColorBook = {
     id: 0,
     title: '',
@@ -25,7 +32,7 @@ export class AcbStreamDecoder extends Transform {
   };
   private colorCount = 0;
 
-  constructor(options: TransformOptions) {
+  constructor(options?: TransformOptions) {
     super(options);
     this.readAscii(4, this.onSignature);
   }

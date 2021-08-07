@@ -7,11 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Added typed on() overload for the book event for AcbStreamDecoder
+
+### Fixed
+
+- Made AcbStreamDecoder constructor options optional like it is in Transform
+
 ## [0.0.3] - 2021-08-07
 
 ### Added
 
-- Adde TypeScript definitions
+- Added TypeScript definitions
 
 ### Added
 
@@ -30,4 +38,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Initial working implementation
-
