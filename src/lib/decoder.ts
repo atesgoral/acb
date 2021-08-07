@@ -7,7 +7,7 @@ import type {ColorSpace, Color, ColorBook} from './types';
 const IdToColorSpace: Record<number, ColorSpace> = {
   0: 'RGB',
   2: 'CMYK',
-  7: 'Lab'
+  7: 'Lab',
 };
 
 export interface AcbStreamDecoder extends Transform {
@@ -28,7 +28,7 @@ export class AcbStreamDecoder extends Transform implements AcbStreamDecoder {
     pageMidPoint: 0,
     colorSpace: 'RGB',
     colors: [],
-    isSpot: false
+    isSpot: false,
   };
   private colorCount = 0;
 
@@ -94,10 +94,13 @@ export class AcbStreamDecoder extends Transform implements AcbStreamDecoder {
   }
 
   private onColorSpaceId(colorSpaceId: number) {
-    const colorSpace = IdToColorSpace[colorSpaceId]
+    const colorSpace = IdToColorSpace[colorSpaceId];
 
     if (!colorSpace) {
-      return this.emit('error', new Error(`Unknown color space: ${colorSpaceId}`));
+      return this.emit(
+        'error',
+        new Error(`Unknown color space: ${colorSpaceId}`)
+      );
     }
 
     this.book.colorSpace = colorSpace;
@@ -125,7 +128,7 @@ export class AcbStreamDecoder extends Transform implements AcbStreamDecoder {
     const color: Color = {
       name: '',
       code: '',
-      components: []
+      components: [],
     };
 
     this.readString((name) => {
@@ -145,19 +148,23 @@ export class AcbStreamDecoder extends Transform implements AcbStreamDecoder {
 
   private readComponents(callback: (components: number[]) => void) {
     switch (this.book.colorSpace) {
-    case 'RGB':
-      this._bytes(3, (chunk) => callback(Array.from(chunk)));
-      break;
-    case 'CMYK':
-      this._bytes(4, (chunk) => callback(Array.from(chunk).map((c) => Math.round((255 - c) / 2.55))));
-      break;
-    case 'Lab':
-      this._bytes(3, (chunk) => callback([
-        Math.round(chunk[0] / 2.55),
-        chunk[1] - 128,
-        chunk[2] - 128
-      ]));
-      break;
+      case 'RGB':
+        this._bytes(3, (chunk) => callback(Array.from(chunk)));
+        break;
+      case 'CMYK':
+        this._bytes(4, (chunk) =>
+          callback(Array.from(chunk).map((c) => Math.round((255 - c) / 2.55)))
+        );
+        break;
+      case 'Lab':
+        this._bytes(3, (chunk) =>
+          callback([
+            Math.round(chunk[0] / 2.55),
+            chunk[1] - 128,
+            chunk[2] - 128,
+          ])
+        );
+        break;
     }
   }
 
@@ -176,7 +183,9 @@ export class AcbStreamDecoder extends Transform implements AcbStreamDecoder {
   private readString(callback: (value: string) => void) {
     this.readUInt32BE((length) => {
       if (length) {
-        this._bytes(length * 2, (chunk) => callback.call(this, chunk.swap16().toString('utf16le')));
+        this._bytes(length * 2, (chunk) =>
+          callback.call(this, chunk.swap16().toString('utf16le'))
+        );
       } else {
         callback.call(this, '');
       }
