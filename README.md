@@ -20,7 +20,7 @@ const book = {
     {name: 'Green', code: 'GREEN ', components: [0, 255, 0]},
     {name: 'Blue', code: 'BLUE  ', components: [0, 0, 255]},
   ],
-  isSpot: true
+  isSpot: true,
 };
 ```
 
