@@ -1,25 +1,13 @@
-const Chunk = {
-  fromAscii: (value) => Buffer.from(value, 'ascii'),
-  fromUInt16BE: (value) => {
-    const chunk = Buffer.allocUnsafe(2);
-    chunk.writeUInt16BE(value);
-    return chunk;
-  },
-  fromUInt32BE: (value) => {
-    const chunk = Buffer.allocUnsafe(4);
-    chunk.writeUInt32BE(value);
-    return chunk;
-  },
-  fromString: (value) => {
-    const chunk = Buffer.allocUnsafe(4 + value.length * 2);
-    chunk.write(value, 4, 'utf16le');
-    chunk.swap16();
-    chunk.writeUInt32BE(value.length);
-    return chunk;
-  }
-}
+import {ColorSpace, ColorBook} from './types';
+import * as Chunk from './chunk';
 
-export function* encodeAcb(book) {
+const ColorSpaceToId: Record<ColorSpace, number> = {
+  'RGB': 0,
+  'CMYK': 2,
+  'Lab': 7
+};
+
+export function* encodeAcb(book: ColorBook) {
   yield Chunk.fromAscii('8BCB');
   yield Chunk.fromUInt16BE(1);
 
@@ -32,11 +20,7 @@ export function* encodeAcb(book) {
   yield Chunk.fromUInt16BE(book.pageSize);
   yield Chunk.fromUInt16BE(book.pageMidPoint);
 
-  const colorSpaceId = {
-    'RGB': 0,
-    'CMYK': 2,
-    'Lab': 7
-  }[book.colorSpace];
+  const colorSpaceId = ColorSpaceToId[book.colorSpace];
 
   if (isNaN(colorSpaceId)) {
     throw new Error(`Unknown color space: ${book.colorSpace}`);
