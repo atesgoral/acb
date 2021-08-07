@@ -100,7 +100,7 @@ describe('fromComponents', () => {
   });
 });
 
-describe ('toComponents', () => {
+describe('toComponents', () => {
   describe('RGB', () => {
     test('returns minimum components from the given buffer', () => {
       const components = Chunk.toComponents(Buffer.from([0, 0, 0]), 'RGB');
@@ -109,13 +109,19 @@ describe ('toComponents', () => {
     });
 
     test('returns mid-range components from the given buffer', () => {
-      const components = Chunk.toComponents(Buffer.from([127, 127, 127]), 'RGB');
+      const components = Chunk.toComponents(
+        Buffer.from([127, 127, 127]),
+        'RGB'
+      );
       const expected = [127, 127, 127];
       expect(components).toEqual(expected);
     });
 
     test('returns maximum components from the given buffer', () => {
-      const components = Chunk.toComponents(Buffer.from([255, 255, 255]), 'RGB');
+      const components = Chunk.toComponents(
+        Buffer.from([255, 255, 255]),
+        'RGB'
+      );
       const expected = [255, 255, 255];
       expect(components).toEqual(expected);
     });
@@ -123,13 +129,19 @@ describe ('toComponents', () => {
 
   describe('CMYK', () => {
     test('returns minimum components from the given buffer', () => {
-      const components = Chunk.toComponents(Buffer.from([255, 255, 255, 255]), 'CMYK');
+      const components = Chunk.toComponents(
+        Buffer.from([255, 255, 255, 255]),
+        'CMYK'
+      );
       const expected = [0, 0, 0, 0];
       expect(components).toEqual(expected);
     });
 
     test('returns mid-range components from the given buffer', () => {
-      const components = Chunk.toComponents(Buffer.from([128, 128, 128, 128]), 'CMYK');
+      const components = Chunk.toComponents(
+        Buffer.from([128, 128, 128, 128]),
+        'CMYK'
+      );
       const expected = [50, 50, 50, 50];
       expect(components).toEqual(expected);
     });
@@ -149,13 +161,19 @@ describe ('toComponents', () => {
     });
 
     test('returns mid-range components from the given buffer', () => {
-      const components = Chunk.toComponents(Buffer.from([128, 128, 128]), 'Lab');
+      const components = Chunk.toComponents(
+        Buffer.from([128, 128, 128]),
+        'Lab'
+      );
       const expected = [50, 0, 0];
       expect(components).toEqual(expected);
     });
 
     test('returns maximum components from the given buffer', () => {
-      const components = Chunk.toComponents(Buffer.from([255, 255, 255]), 'Lab');
+      const components = Chunk.toComponents(
+        Buffer.from([255, 255, 255]),
+        'Lab'
+      );
       const expected = [100, 127, 127];
       expect(components).toEqual(expected);
     });
