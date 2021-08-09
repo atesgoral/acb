@@ -168,9 +168,10 @@ export class AcbStreamDecoder extends Transform implements AcbStreamDecoder {
   private readString(callback: (value: string) => void) {
     this.readUInt32BE((length) => {
       if (length) {
-        this._bytes(length * 2, (chunk) =>
-          callback.call(this, chunk.swap16().toString('utf16le'))
-        );
+        this._bytes(length * 2, (chunk) => {
+          const le = Buffer.from(chunk).swap16();
+          callback.call(this, le.toString('utf16le'))
+        });
       } else {
         callback.call(this, '');
       }
