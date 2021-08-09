@@ -23,7 +23,7 @@
   "scripts": {
     "format": "prettier --write .",
     "format-check": "prettier --check .",
-    "build": "rollup --config",
+    "build": "rm -fr dist && rollup --config",
     "test": "jest"
   },
   "repository": {
