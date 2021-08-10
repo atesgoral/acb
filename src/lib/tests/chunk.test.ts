@@ -68,7 +68,7 @@ describe('fromComponents', () => {
 
     test('returns a buffer from the mid-range components', () => {
       const chunk = Chunk.fromComponents([50, 50, 50, 50], 'CMYK');
-      const expected = Buffer.from([128, 128, 128, 128]);
+      const expected = Buffer.from([127, 127, 127, 127]);
       expect(chunk).toEqual(expected);
     });
 
@@ -88,7 +88,7 @@ describe('fromComponents', () => {
 
     test('returns a buffer from the mid-range components', () => {
       const chunk = Chunk.fromComponents([50, 0, 0], 'Lab');
-      const expected = Buffer.from([127, 128, 128]);
+      const expected = Buffer.from([128, 128, 128]);
       expect(chunk).toEqual(expected);
     });
 
@@ -139,7 +139,7 @@ describe('toComponents', () => {
 
     test('returns mid-range components from the given buffer', () => {
       const components = Chunk.toComponents(
-        Buffer.from([128, 128, 128, 128]),
+        Buffer.from([127, 127, 127, 127]),
         'CMYK'
       );
       const expected = [50, 50, 50, 50];

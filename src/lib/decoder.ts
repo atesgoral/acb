@@ -170,7 +170,7 @@ export class AcbStreamDecoder extends Transform implements AcbStreamDecoder {
       if (length) {
         this._bytes(length * 2, (chunk) => {
           const le = Buffer.from(chunk).swap16();
-          callback.call(this, le.toString('utf16le'))
+          callback.call(this, le.toString('utf16le'));
         });
       } else {
         callback.call(this, '');
