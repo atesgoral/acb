@@ -38,6 +38,7 @@
   },
   "homepage": "https://github.com/atesgoral/acb#readme",
   "dependencies": {
+    "ajv": "^8.6.2",
     "stream-parser": "^0.3.1"
   },
   "devDependencies": {
