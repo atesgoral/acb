@@ -14,7 +14,7 @@ function generateBook({
   colors: Iterable<Color>;
 }) {
   const book: ColorBook = {
-    id: 3090 + id,
+    id: 40 + id,
     colorSpace,
     title: `${colorSpace} Components`,
     description: 'Example color book to verify component conversion',

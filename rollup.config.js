@@ -4,7 +4,7 @@ import pkg from './package.json';
 
 export default defineConfig({
   input: 'src/index.ts',
-  external: ['stream-parser', 'stream'],
+  external: ['stream-parser', 'ajv/dist/jtd', 'stream'],
   plugins: [typescript({tsconfig: './tsconfig.json'})],
   output: [
     {file: pkg.main, format: 'cjs'},

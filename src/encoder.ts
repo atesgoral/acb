@@ -1,4 +1,5 @@
 import {ColorSpace, ColorBook} from './types';
+import validate from './validator';
 import * as Chunk from './chunk';
 
 const ColorSpaceToId: Record<ColorSpace, number> = {
@@ -14,6 +15,14 @@ const ColorSpaceComponents: Record<ColorSpace, number> = {
 };
 
 export function* encodeAcb(book: ColorBook) {
+  const valid = validate(book);
+
+  if (!valid) {
+    throw new Error(
+      `Validation failed: ${JSON.stringify(validate.errors, null, 2)}`
+    );
+  }
+
   yield Chunk.fromAscii('8BCB');
   yield Chunk.fromUInt16BE(1);
 
