@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 
 import {encodeAcb, ColorSpace, Color, ColorBook} from '../src';
-import {conversion} from '../src/lib/conversion';
+import {conversion} from '../src/conversion';
 
 function generateBook({
   id,
@@ -77,7 +77,7 @@ function* labColors() {
 
 function saveBook(book: ColorBook) {
   const filename = `${book.title}.acb`;
-  const filepath = path.join('src/lib/tests/acb-files', filename);
+  const filepath = path.join('books', filename);
   const buffer = Buffer.concat([...encodeAcb(book)]);
   fs.writeFileSync(filepath, buffer);
 }
