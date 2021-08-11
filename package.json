@@ -24,7 +24,8 @@
     "format": "prettier --write .",
     "format-check": "prettier --check .",
     "build": "rm -fr dist && rollup --config",
-    "test": "jest"
+    "test": "jest",
+    "generate-examples": "ts-node --files scripts/generate-examples"
   },
   "repository": {
     "type": "git",
@@ -51,6 +52,7 @@
     "prettier": "^2.3.2",
     "rollup": "^2.56.0",
     "ts-jest": "^27.0.4",
+    "ts-node": "^10.2.0",
     "tslib": "^2.3.0",
     "typescript": "^4.3.5"
   }

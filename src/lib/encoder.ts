@@ -7,6 +7,12 @@ const ColorSpaceToId: Record<ColorSpace, number> = {
   Lab: 7,
 };
 
+const ColorSpaceComponents: Record<ColorSpace, number> = {
+  RGB: 3,
+  CMYK: 4,
+  Lab: 3,
+};
+
 export function* encodeAcb(book: ColorBook) {
   yield Chunk.fromAscii('8BCB');
   yield Chunk.fromUInt16BE(1);
@@ -21,6 +27,7 @@ export function* encodeAcb(book: ColorBook) {
   yield Chunk.fromUInt16BE(book.pageMidPoint);
 
   const colorSpaceId = ColorSpaceToId[book.colorSpace];
+  const expectedComponents = ColorSpaceComponents[book.colorSpace];
 
   if (isNaN(colorSpaceId)) {
     throw new Error(`Unknown color space: ${book.colorSpace}`);
@@ -29,6 +36,14 @@ export function* encodeAcb(book: ColorBook) {
   yield Chunk.fromUInt16BE(colorSpaceId);
 
   for (let color of book.colors) {
+    if (color.code.length !== 6) {
+      throw new Error(`Invalid color code length: ${color.code.length}`);
+    }
+
+    if (color.components.length !== expectedComponents) {
+      throw new Error(`Invalid component count: ${color.components.length}`);
+    }
+
     yield Chunk.fromString(color.name);
     yield Chunk.fromAscii(color.code);
     yield Chunk.fromComponents(color.components, book.colorSpace);
