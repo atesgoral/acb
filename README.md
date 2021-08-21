@@ -1,4 +1,5 @@
 [![npm (scoped)](https://img.shields.io/npm/v/@atesgoral/acb)](https://www.npmjs.com/package/@atesgoral/acb)
+[![CI](https://github.com/atesgoral/acb/actions/workflows/ci.yml/badge.svg)](https://github.com/atesgoral/acb/actions/workflows/ci.yml)
 [![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.svg)](http://www.typescriptlang.org/)
 
 # acb
