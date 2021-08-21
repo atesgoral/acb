@@ -14,13 +14,13 @@ function generateBook({
   colors: Iterable<Color>;
 }) {
   const book: ColorBook = {
-    id: 40 + id,
+    id,
     colorSpace,
     title: `${colorSpace} Components`,
     description: 'Example color book to verify component conversion',
     colorNamePrefix: `${colorSpace} `,
     colorNameSuffix: '',
-    pageSize: 10,
+    pageSize: 9,
     pageMidPoint: 5,
     isSpot: colorSpace === 'Lab', // @TODO remove this property altogether
     colors: [...colors],
@@ -84,7 +84,7 @@ function saveBook(book: ColorBook) {
 
 saveBook(
   generateBook({
-    id: 1,
+    id: 43,
     colorSpace: 'RGB',
     colors: rgbColors(),
   })
@@ -92,7 +92,7 @@ saveBook(
 
 saveBook(
   generateBook({
-    id: 2,
+    id: 44,
     colorSpace: 'CMYK',
     colors: cmykColors(),
   })
@@ -100,7 +100,7 @@ saveBook(
 
 saveBook(
   generateBook({
-    id: 3,
+    id: 45,
     colorSpace: 'Lab',
     colors: labColors(),
   })
