@@ -7,10 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.5] - 2021-08-21
+
 ### Fixed
 
 - Exclude test files from build output
 - Don't mutate original buffer while decoding
+- Round half away from zero to match Photoshop's rounding
 
 ## [0.0.4] - 2021-08-07
 
