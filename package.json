@@ -23,7 +23,7 @@
   "scripts": {
     "format": "prettier --write .",
     "format-check": "prettier --check .",
-    "type-coverage": "type-coverage --strict",
+    "type-coverage": "type-coverage --strict --at-least 99",
     "build": "rm -fr dist && rollup --config",
     "test": "jest",
     "generate-examples": "ts-node --files scripts/generate-examples"
