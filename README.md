@@ -8,9 +8,9 @@ Adobe Photoshop Color Book (ACB) encoder and decoder.
 ## Install
 
 ```sh
-npm install acb
+npm install @atesgoral/acb
 # Or:
-yarn add acb
+yarn add @atesgoral/acb
 ```
 
 ## Book structure
@@ -39,7 +39,7 @@ const book = {
 If you're using TypeScript, there is a `ColorBook` interface that is exported by the library:
 
 ```ts
-import type {ColorBook} from 'acb';
+import type {ColorBook} from '@atesgoral/acb';
 
 const book: ColorBook = {
   // ...
@@ -57,11 +57,11 @@ All properties are mandatory:
 |colorNameSuffix|The suffix to append to every color name.|
 |pageSize|The number of colors to show on every color page in the library color picker. The maximum Photoshop allows is 9.|
 |pageMidPoint|Which color (by index) on a page to use as the color page thumbnail. For example, with 9 colors per page, 5 would be the middle color.|
-|colorSpace|The color space of the color book. Valid values are: `'RGB'`, `'CMYK'` and `'Lab'`. (`import type {ColorSpace} from 'acb';`)|
+|colorSpace|The color space of the color book. Valid values are: `'RGB'`, `'CMYK'` and `'Lab'`. (`import type {ColorSpace} from '@atesgoral/acb';`)|
 |isSpot|Whether the color book consists of spot color or process colors. This should be `true` for Lab and `false` for RGB and CMYK. (I might remove this property altogether, and handle it internally.)|
 |colors|And array of color records.|
 
-Each color record (`import type {Color} from 'acb';`) consists of the following mandatory properties:
+Each color record (`import type {Color} from '@atesgoral/acb';`) consists of the following mandatory properties:
 
 |field|description|
 |:-:|-|
