@@ -55,26 +55,26 @@ const book: ColorBook = {
 
 All properties are mandatory:
 
-|field|description|
-|:-:|-|
-|id|The unique color book identifier. You must ensure that this does not conflict with an existing color book that exists in Photoshop's color book folder.|
-|title|The color book title. Photoshop seems to show the filename instead of this.|
-|description|The color book description. Photoshop doesn't show this anywhere. Use `'^R'` for the registered trademark symbol and `'^C'` for the copyright symbol.|
-|colorNamePrefix|The prefix to prepend to every color name.|
-|colorNameSuffix|The suffix to append to every color name.|
-|pageSize|The number of colors to show on every color page in the library color picker. The maximum Photoshop allows is 9.|
-|pageMidPoint|Which color (by index) on a page to use as the color page thumbnail. For example, with 9 colors per page, 5 would be the middle color.|
-|colorSpace|The color space of the color book. Valid values are: `'RGB'`, `'CMYK'` and `'Lab'`. (`import type {ColorSpace} from '@atesgoral/acb';`)|
-|isSpot|Whether the color book consists of spot color or process colors. This should be `true` for Lab and `false` for RGB and CMYK. (I might remove this property altogether, and handle it internally.)|
-|colors|And array of color records.|
+|      field      | description                                                                                                                                                                                       |
+| :-------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|       id        | The unique color book identifier. You must ensure that this does not conflict with an existing color book that exists in Photoshop's color book folder.                                           |
+|      title      | The color book title. Photoshop seems to show the filename instead of this.                                                                                                                       |
+|   description   | The color book description. Photoshop doesn't show this anywhere. Use `'^R'` for the registered trademark symbol and `'^C'` for the copyright symbol.                                             |
+| colorNamePrefix | The prefix to prepend to every color name.                                                                                                                                                        |
+| colorNameSuffix | The suffix to append to every color name.                                                                                                                                                         |
+|    pageSize     | The number of colors to show on every color page in the library color picker. The maximum Photoshop allows is 9.                                                                                  |
+|  pageMidPoint   | Which color (by index) on a page to use as the color page thumbnail. For example, with 9 colors per page, 5 would be the middle color.                                                            |
+|   colorSpace    | The color space of the color book. Valid values are: `'RGB'`, `'CMYK'` and `'Lab'`. (`import type {ColorSpace} from '@atesgoral/acb';`)                                                           |
+|     isSpot      | Whether the color book consists of spot color or process colors. This should be `true` for Lab and `false` for RGB and CMYK. (I might remove this property altogether, and handle it internally.) |
+|     colors      | And array of color records.                                                                                                                                                                       |
 
 Each color record (`import type {Color} from '@atesgoral/acb';`) consists of the following mandatory properties:
 
-|field|description|
-|:-:|-|
-|name|The color name.|
-|code|A 6-character unique code for the color.|
-|components|An array of component values. For RGB, it's 3 values 0..255. For CMYK it's 4 values 0..100. For Lab the L component is 0..100 while a and b are -128..127. (All ranges are inclusive.)|
+|   field    | description                                                                                                                                                                            |
+| :--------: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|    name    | The color name.                                                                                                                                                                        |
+|    code    | A 6-character unique code for the color.                                                                                                                                               |
+| components | An array of component values. For RGB, it's 3 values 0..255. For CMYK it's 4 values 0..100. For Lab the L component is 0..100 while a and b are -128..127. (All ranges are inclusive.) |
 
 ## Decoding examples
 
