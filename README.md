@@ -5,6 +5,12 @@
 
 Adobe Photoshop Color Book (ACB) encoder and decoder.
 
+## What
+
+Adobe Photoshop's color picker allows you to pick colors from standard color libraries. These libraries reside as .acb files inside Photoshop's installation directory (e.g. /Applications/Adobe Photoshop/Presets/Color Books on macOS). This library allows you to decode and encode .acb files. You can extract color data from Photoshop's color books, as well as creating your own custom color books you can use or distribute to others.
+
+![image](https://user-images.githubusercontent.com/50832/130333639-adf72cc4-0aad-4621-b447-06a381684117.png)
+
 ## Install
 
 ```sh
@@ -137,3 +143,7 @@ const book = {
 
 const buffer = Buffer.concat([...encodeAcb(book)]);
 ```
+
+## Background
+
+I [reverse-engineered the ACB format](https://magnetiq.ca/pages/acb-spec/) back in 2003 before [Adobe had it published publicly](https://www.adobe.com/devnet-apps/photoshop/fileformatashtml/#50577411_pgfId-1066780). I've been creating custom color books on the side for artists, printers and ink manifacturers. I've finally gotten around to publicly publishing a library that everyone can use.
