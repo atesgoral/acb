@@ -65,7 +65,7 @@ function* labColors() {
   }
 
   for (let ab = 0; ab < 256; ab++) {
-    const components = conversion.Lab.toComponents([50, ab, ab]);
+    const components = conversion.Lab.toComponents([0, ab, ab]);
 
     yield {
       name: `ab ${ab} (${components[1]})`,
