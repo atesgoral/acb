@@ -3,7 +3,7 @@ export type ColorSpace = 'RGB' | 'CMYK' | 'Lab';
 export interface Color {
   name: string;
   code: string;
-  components: Array<number>;
+  components: number[];
 }
 
 export interface ColorBook {
@@ -15,6 +15,6 @@ export interface ColorBook {
   pageSize: number;
   pageMidPoint: number;
   colorSpace: ColorSpace;
-  colors: Array<Color>;
+  colors: Color[];
   isSpot: boolean;
 }
