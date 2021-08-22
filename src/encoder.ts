@@ -39,7 +39,7 @@ export function* encodeAcb(book: ColorBook) {
   const expectedComponents = ColorModelComponents[book.colorModel];
 
   if (isNaN(colorModelId)) {
-    throw new Error(`Unknown color space: ${book.colorModel}`);
+    throw new Error(`Unknown color model: ${book.colorModel}`);
   }
 
   yield Chunk.fromUInt16BE(colorModelId);

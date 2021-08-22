@@ -100,7 +100,7 @@ export class AcbStreamDecoder extends Transform implements AcbStreamDecoder {
     if (!colorModel) {
       return this.emit(
         'error',
-        new Error(`Unknown color space: ${colorModelId}`)
+        new Error(`Unknown color model: ${colorModelId}`)
       );
     }
 
