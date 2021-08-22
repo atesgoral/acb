@@ -1,14 +1,23 @@
 # acb
 
-[![npm (scoped)](https://img.shields.io/npm/v/@atesgoral/acb)](https://www.npmjs.com/package/@atesgoral/acb)
-[![CI](https://github.com/atesgoral/acb/actions/workflows/ci.yml/badge.svg)](https://github.com/atesgoral/acb/actions/workflows/ci.yml)
-[![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.svg)](http://www.typescriptlang.org/)
+[![npm (scoped)](https://img.shields.io/npm/v/@atesgoral/acb)][1]
+[![CI](https://github.com/atesgoral/acb/actions/workflows/ci.yml/badge.svg)][2]
+[![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.svg)][3]
+
+[1]: https://www.npmjs.com/package/@atesgoral/acb
+[2]: https://github.com/atesgoral/acb/actions/workflows/ci.yml
+[3]: http://www.typescriptlang.org/
 
 Adobe Photoshop Color Book (ACB) encoder and decoder.
 
 ## What
 
-Adobe Photoshop's color picker allows you to pick colors from standard color libraries. These libraries reside as .acb files inside Photoshop's installation directory (e.g. /Applications/Adobe Photoshop/Presets/Color Books on macOS). This library allows you to decode and encode .acb files. You can extract color data from Photoshop's color books, as well as creating your own custom color books you can use or distribute to others.
+Adobe Photoshop's color picker allows you to pick colors from standard color
+libraries. These libraries reside as .acb files inside Photoshop's installation
+directory (e.g. /Applications/Adobe Photoshop/Presets/Color Books on macOS).
+This library allows you to decode and encode .acb files. You can extract color
+data from Photoshop's color books, as well as creating your own custom color
+books you can use them yourself or distribute them.
 
 ![image](https://user-images.githubusercontent.com/50832/130333639-adf72cc4-0aad-4621-b447-06a381684117.png)
 
@@ -22,7 +31,8 @@ yarn add @atesgoral/acb
 
 ## Book structure
 
-The output from the decoder and the expected input into the decoder looks something like this:
+The output from the decoder and the expected input into the decoder looks
+something like this:
 
 ```js
 const book = {
@@ -43,7 +53,8 @@ const book = {
 };
 ```
 
-If you're using TypeScript, there is a `ColorBook` interface that is exported by the library:
+If you're using TypeScript, there is a `ColorBook` interface that is exported by
+the library:
 
 ```ts
 import type {ColorBook} from '@atesgoral/acb';
@@ -55,26 +66,56 @@ const book: ColorBook = {
 
 All properties are mandatory:
 
-|      field       | description                                                                                                                                                                                                   |
-| :--------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-|        id        | The unique color book identifier. You must ensure that this does not conflict with an existing color book that exists in Photoshop's color book folder. Stock Photoshop color books seem to start at id 3000. |
-|      title       | The color book title. Photoshop seems to show the filename instead of this.                                                                                                                                   |
-|   description    | The color book description. Photoshop doesn't show this anywhere. Use `'^R'` for the registered trademark symbol (&reg;) and `'^C'` for the copyright symbol (&copy;).                                        |
-| colorNamePrefix  | The prefix to prepend to every color name.                                                                                                                                                                    |
-| colorNamePostfix | The suffix to append to every color name.                                                                                                                                                                     |
-|     pageSize     | The number of colors to show on every color page in the library color picker. The maximum Photoshop allows is 9.                                                                                              |
-|     pageKey      | Which color (by index) on a page to use as the color page thumbnail. For example, with 9 colors per page, 5 would be the middle color.                                                                        |
-|    colorModel    | The color space of the color book. Valid values are: `'RGB'`, `'CMYK'` and `'Lab'`. (`import type {ColorModel} from '@atesgoral/acb';`)                                                                       |
-|      isSpot      | Whether the color book consists of spot color or process colors. This should be `true` for Lab and `false` for RGB and CMYK. (I might remove this property altogether, and handle it internally.)             |
-|      colors      | And array of color records.                                                                                                                                                                                   |
+<!-- markdownlint-disable line-length -->
 
-Each color record (`import type {Color} from '@atesgoral/acb';`) consists of the following mandatory properties:
+|      field       | description                                               |
+| :--------------: | --------------------------------------------------------- |
+|        id        | The unique color book identifier. You must ensure that    |
+|                  | this does not conflict with an existing color book that   |
+|                  | exists in Photoshop's color book folder. Stock Photoshop  |
+|                  | color books seem to start at id 3000.                     |
+|      title       | The color book title. Photoshop seems to show the         |
+|                  | filename instead of this.                                 |
+|   description    | The color book description. Photoshop doesn't show this   |
+|                  | anywhere. Use `'^R'` for the registered trademark symbol  |
+|                  | (&reg;) and `'^C'` for the copyright symbol (&copy;).     |
+| colorNamePrefix  | The prefix to prepend to every color name.                |
+| colorNamePostfix | The suffix to append to every color name.                 |
+|     pageSize     | The number of colors to show on every color page in the   |
+|                  | library color picker. The maximum that Photoshop allows   |
+|                  | is 9.                                                     |
+|     pageKey      | Which color (by index) on a page to use as the color page |
+|                  | key. For example, with 9 colors per page, 5 would be the  |
+|                  | middle of the page color.                                 |
+|    colorModel    | The color model of the color book. Valid values are:      |
+|                  |                                                           |
+|                  | \* `'RGB'`                                                |
+|                  | \* `'CMYK'`                                               |
+|                  | \* `'Lab'`                                                |
+|                  |                                                           |
+|                  | (`import type {ColorModel} from '@atesgoral/acb';`)       |
+|      isSpot      | Whether the color book consists of spot color or process  |
+|                  | colors. This should be `true` for Lab and `false` for RGB |
+|                  | and CMYK. (I might remove this property altogether, and   |
+|                  | handle it internally.)                                    |
+|      colors      | And array of color records.                               |
 
-|   field    | description                                                                                                                                                                            |
-| :--------: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-|    name    | The color name.                                                                                                                                                                        |
-|    code    | A 6-character unique code for the color.                                                                                                                                               |
-| components | An array of component values. For RGB, it's 3 values 0..255. For CMYK it's 4 values 0..100. For Lab the L component is 0..100 while a and b are -128..127. (All ranges are inclusive.) |
+<!-- markdownlint-enable line-length -->
+
+Each color record (`import type {Color} from '@atesgoral/acb';`) consists of the
+following mandatory properties:
+
+<!-- markdownlint-disable line-length -->
+
+|   field    | description                                                     |
+| :--------: | --------------------------------------------------------------- |
+|    name    | The color name.                                                 |
+|    code    | A 6-character unique code for the color.                        |
+| components | An array of component values. For RGB, it's 3 values 0..255.    |
+|            | For CMYK it's 4 values 0..100. For Lab the L component is       |
+|            | 0..100 while a and b are -128..127. (All ranges are inclusive.) |
+
+<!-- markdownlint-enable line-length -->
 
 ## Decoding examples
 
@@ -147,4 +188,10 @@ const buffer = Buffer.concat([...encodeAcb(book)]);
 
 ## Background
 
-I [reverse-engineered the ACB format](https://magnetiq.ca/pages/acb-spec/) back in 2003 before [Adobe had it published publicly](https://www.adobe.com/devnet-apps/photoshop/fileformatashtml/#50577411_pgfId-1066780). I've been creating custom color books on the side for artists, printers and ink manifacturers. I've finally gotten around to publicly publishing a library that everyone can use.
+I [reverse-engineered the ACB format][4] back in 2003 before [Adobe had it
+published publicly][5]. I've been creating custom color books on the side for
+artists, printers and ink manifacturers. I've finally gotten around to publicly
+publishing a library that everyone can use.
+
+[4]: https://magnetiq.ca/pages/acb-spec/
+[5]: https://www.adobe.com/devnet-apps/photoshop/fileformatashtml/#50577411_pgfId-1066780
