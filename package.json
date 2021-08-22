@@ -21,6 +21,7 @@
     "dist"
   ],
   "scripts": {
+    "prepublishOnly": "yarn build",
     "format": "prettier --write .",
     "format-check": "prettier --check .",
     "type-coverage": "type-coverage --strict --at-least 99",

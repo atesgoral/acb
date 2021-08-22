@@ -10,7 +10,15 @@ and this project adheres to [Semantic Versioning][2].
 
 ## [Unreleased]
 
+## [0.2.1] - 2021-08-22
+
+### Fixed
+
+- Rebuild dist folder
+
 ## [0.2.0] - 2021-08-22
+
+_Deprecated. Updated .d.ts files weren't included._
 
 ### Changed
 
