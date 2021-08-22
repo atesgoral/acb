@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning][2].
 
 ## [Unreleased]
 
+## [0.2.0] - 2021-08-22
+
 ### Changed
 
 - Renamed properties with more accurate terms: colorSpace -> colorModel,
