@@ -7,11 +7,11 @@ const schema: JTDSchemaType<ColorBook> = {
     id: {type: 'uint16'},
     title: {type: 'string'},
     colorNamePrefix: {type: 'string'},
-    colorNameSuffix: {type: 'string'},
+    colorNamePostfix: {type: 'string'},
     description: {type: 'string'},
     pageSize: {type: 'uint16'},
-    pageMidPoint: {type: 'uint16'},
-    colorSpace: {enum: ['RGB', 'CMYK', 'Lab']},
+    pageKey: {type: 'uint16'},
+    colorModel: {enum: ['RGB', 'CMYK', 'Lab']},
     colors: {
       elements: {
         properties: {

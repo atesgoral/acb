@@ -1,4 +1,4 @@
-import {ColorSpace} from './types';
+import {ColorModel} from './types';
 import {conversion} from './conversion';
 
 export function fromAscii(value: string) {
@@ -25,10 +25,10 @@ export function fromString(value: string) {
   return chunk;
 }
 
-export function fromComponents(components: number[], colorSpace: ColorSpace) {
-  return Buffer.from(conversion[colorSpace].fromComponents(components));
+export function fromComponents(components: number[], colorModel: ColorModel) {
+  return Buffer.from(conversion[colorModel].fromComponents(components));
 }
 
-export function toComponents(chunk: Buffer, colorSpace: ColorSpace) {
-  return conversion[colorSpace].toComponents(Array.from(chunk));
+export function toComponents(chunk: Buffer, colorModel: ColorModel) {
+  return conversion[colorModel].toComponents(Array.from(chunk));
 }

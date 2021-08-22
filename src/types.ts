@@ -1,4 +1,4 @@
-export type ColorSpace = 'RGB' | 'CMYK' | 'Lab';
+export type ColorModel = 'RGB' | 'CMYK' | 'Lab';
 
 export interface Color {
   name: string;
@@ -10,11 +10,11 @@ export interface ColorBook {
   id: number;
   title: string;
   colorNamePrefix: string;
-  colorNameSuffix: string;
+  colorNamePostfix: string;
   description: string;
   pageSize: number;
-  pageMidPoint: number;
-  colorSpace: ColorSpace;
+  pageKey: number;
+  colorModel: ColorModel;
   colors: Color[];
   isSpot: boolean;
 }

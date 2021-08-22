@@ -2,10 +2,10 @@ import {Transform, TransformOptions} from 'stream';
 
 import Parser from 'stream-parser';
 
-import type {ColorSpace, Color, ColorBook} from './types';
+import type {ColorModel, Color, ColorBook} from './types';
 import * as Chunk from './chunk';
 
-const IdToColorSpace: Record<number, ColorSpace> = {
+const IdToColorModel: Record<number, ColorModel> = {
   0: 'RGB',
   2: 'CMYK',
   7: 'Lab',
@@ -23,11 +23,11 @@ export class AcbStreamDecoder extends Transform implements AcbStreamDecoder {
     id: 0,
     title: '',
     colorNamePrefix: '',
-    colorNameSuffix: '',
+    colorNamePostfix: '',
     description: '',
     pageSize: 0,
-    pageMidPoint: 0,
-    colorSpace: 'RGB',
+    pageKey: 0,
+    colorModel: 'RGB',
     colors: [],
     isSpot: false,
   };
@@ -66,11 +66,11 @@ export class AcbStreamDecoder extends Transform implements AcbStreamDecoder {
 
   private onColorNamePrefix(colorNamePrefix: string) {
     this.book.colorNamePrefix = colorNamePrefix;
-    this.readString(this.onColorNameSuffix);
+    this.readString(this.onColorNamePostfix);
   }
 
-  private onColorNameSuffix(colorNameSuffix: string) {
-    this.book.colorNameSuffix = colorNameSuffix;
+  private onColorNamePostfix(colorNamePostfix: string) {
+    this.book.colorNamePostfix = colorNamePostfix;
     this.readString(this.onDescription);
   }
 
@@ -89,22 +89,22 @@ export class AcbStreamDecoder extends Transform implements AcbStreamDecoder {
     this.readUInt16BE(this.onPageMidPoint);
   }
 
-  private onPageMidPoint(pageMidPoint: number) {
-    this.book.pageMidPoint = pageMidPoint;
-    this.readUInt16BE(this.onColorSpaceId);
+  private onPageMidPoint(pageKey: number) {
+    this.book.pageKey = pageKey;
+    this.readUInt16BE(this.onColorModelId);
   }
 
-  private onColorSpaceId(colorSpaceId: number) {
-    const colorSpace = IdToColorSpace[colorSpaceId];
+  private onColorModelId(colorModelId: number) {
+    const colorModel = IdToColorModel[colorModelId];
 
-    if (!colorSpace) {
+    if (!colorModel) {
       return this.emit(
         'error',
-        new Error(`Unknown color space: ${colorSpaceId}`)
+        new Error(`Unknown color space: ${colorModelId}`)
       );
     }
 
-    this.book.colorSpace = colorSpace;
+    this.book.colorModel = colorModel;
     this.book.colors = [];
     this.checkReadNextColor();
   }
@@ -148,8 +148,8 @@ export class AcbStreamDecoder extends Transform implements AcbStreamDecoder {
   }
 
   private readComponents(callback: (components: number[]) => void) {
-    this._bytes(this.book.colorSpace === 'CMYK' ? 4 : 3, (chunk) =>
-      callback(Chunk.toComponents(chunk, this.book.colorSpace))
+    this._bytes(this.book.colorModel === 'CMYK' ? 4 : 3, (chunk) =>
+      callback(Chunk.toComponents(chunk, this.book.colorModel))
     );
   }
 

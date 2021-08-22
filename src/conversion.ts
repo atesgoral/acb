@@ -1,4 +1,4 @@
-import {ColorSpace} from './types';
+import {ColorModel} from './types';
 
 function roundUp(value: number) {
   return Math.round(Math.abs(value)) * Math.sign(value);
@@ -14,7 +14,7 @@ interface Converter {
   toComponents: (values: number[]) => number[];
 }
 
-export const conversion: Record<ColorSpace, Converter> = {
+export const conversion: Record<ColorModel, Converter> = {
   RGB: {
     fromComponents: (components: number[]) => components,
     toComponents: (values: number[]) => values,

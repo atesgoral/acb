@@ -1,28 +1,28 @@
 import fs from 'fs';
 import path from 'path';
 
-import {encodeAcb, ColorSpace, Color, ColorBook} from '../src';
+import {encodeAcb, ColorModel, Color, ColorBook} from '../src';
 import {conversion} from '../src/conversion';
 
 function generateBook({
   id,
-  colorSpace,
+  colorModel,
   colors,
 }: {
   id: number;
-  colorSpace: ColorSpace;
+  colorModel: ColorModel;
   colors: Iterable<Color>;
 }) {
   const book: ColorBook = {
     id,
-    colorSpace,
-    title: `${colorSpace} Components`,
+    colorModel,
+    title: `${colorModel} Components`,
     description: 'Example color book to verify component conversion',
-    colorNamePrefix: `${colorSpace} `,
-    colorNameSuffix: '',
+    colorNamePrefix: `${colorModel} `,
+    colorNamePostfix: '',
     pageSize: 9,
-    pageMidPoint: 5,
-    isSpot: colorSpace === 'Lab', // @TODO remove this property altogether
+    pageKey: 5,
+    isSpot: colorModel === 'Lab', // @TODO remove this property altogether
     colors: [...colors],
   };
 
@@ -85,7 +85,7 @@ function saveBook(book: ColorBook) {
 saveBook(
   generateBook({
     id: 43,
-    colorSpace: 'RGB',
+    colorModel: 'RGB',
     colors: rgbColors(),
   })
 );
@@ -93,7 +93,7 @@ saveBook(
 saveBook(
   generateBook({
     id: 44,
-    colorSpace: 'CMYK',
+    colorModel: 'CMYK',
     colors: cmykColors(),
   })
 );
@@ -101,7 +101,7 @@ saveBook(
 saveBook(
   generateBook({
     id: 45,
-    colorSpace: 'Lab',
+    colorModel: 'Lab',
     colors: labColors(),
   })
 );
