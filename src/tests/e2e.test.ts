@@ -27,13 +27,11 @@ function dump(buffer: Buffer) {
   return hexdump(buffer).split('\n');
 }
 
-describe('integrations tests', () => {
+describe('e2e tests', () => {
   test('encoding decoded books is binary-equivalent', async () => {
     const bookPaths = glob.sync('books/**/*');
 
     for (const bookPath of bookPaths) {
-      console.log(`Decoding and encoding ${bookPath}`);
-
       const originalBuffer = readFileSync(bookPath);
 
       const book = await decodeBuffer(originalBuffer);
