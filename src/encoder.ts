@@ -54,7 +54,7 @@ export function* encodeAcb(book: ColorBook) {
     }
 
     yield Chunk.fromString(color.name);
-    yield Chunk.fromAscii(color.code);
+    yield Chunk.fromAscii(color.code.padEnd(6, ' '));
     yield Chunk.fromComponents(color.components, book.colorModel);
   }
 
