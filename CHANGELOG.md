@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning][2].
 
 ## [Unreleased]
 
+### Changed
+
+- Handle trimming/padding of color codes internally
+
 ## [0.3.0] - 2021-08-24
 
 ### Changed

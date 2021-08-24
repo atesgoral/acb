@@ -141,7 +141,7 @@ export class AcbStreamDecoder extends Transform implements AcbStreamDecoder {
       color.name = name;
 
       this.readAscii(6, (code) => {
-        color.code = code;
+        color.code = code.trimEnd();
 
         this.readComponents((components) => {
           color.components = components;

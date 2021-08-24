@@ -34,7 +34,7 @@ function* rgbColors() {
 
     yield {
       name: `${rgb} (${components[0]})`,
-      code: `RGB${rgb.toString(16)}`.padEnd(6, ' '),
+      code: `RGB${rgb.toString(16)}`,
       components,
     };
   }
@@ -46,7 +46,7 @@ function* cmykColors() {
 
     yield {
       name: `${cmyk} (${components[0]})`,
-      code: `CMYK${cmyk.toString(16)}`.padEnd(6, ' '),
+      code: `CMYK${cmyk.toString(16)}`,
       components,
     };
   }
@@ -58,7 +58,7 @@ function* labColors() {
 
     yield {
       name: `L ${l} (${components[0]})`,
-      code: `L${l.toString(16)}`.padEnd(6, ' '),
+      code: `L${l.toString(16)}`,
       components,
     };
   }
@@ -68,7 +68,7 @@ function* labColors() {
 
     yield {
       name: `ab ${ab} (${components[1]})`,
-      code: `ab${ab.toString(16)}`.padEnd(6, ' '),
+      code: `ab${ab.toString(16)}`,
       components,
     };
   }
