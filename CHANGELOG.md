@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning][2].
 
 ### Changed
 
+## [0.4.0] - 2021-08-24
+
 - Handle trimming/padding of color codes internally
 
 ## [0.3.0] - 2021-08-24
