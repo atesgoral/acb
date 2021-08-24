@@ -45,7 +45,7 @@ export function* encodeAcb(book: ColorBook) {
   yield Chunk.fromUInt16BE(colorModelId);
 
   for (let color of book.colors) {
-    if (color.code.length !== 6) {
+    if (color.code.length < 1 || color.code.length > 6) {
       throw new Error(`Invalid color code length: ${color.code.length}`);
     }
 
