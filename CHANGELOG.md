@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning][2].
 
 ## [Unreleased]
 
+### Changed
+
+- Removed the redundant isSpot property. Lab color books are spot color books.
+
 ## [0.2.1] - 2021-08-22
 
 ### Fixed
