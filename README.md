@@ -44,7 +44,6 @@ const book = {
   pageSize: 3,
   pageKey: 1,
   colorModel: 'RGB',
-  isSpot: true,
   colors: [
     {name: 'Red', code: 'RED   ', components: [255, 0, 0]},
     {name: 'Green', code: 'GREEN ', components: [0, 255, 0]},
@@ -94,10 +93,6 @@ All properties are mandatory:
 |                  | \* `'Lab'`                                                |
 |                  |                                                           |
 |                  | (`import type {ColorModel} from '@atesgoral/acb';`)       |
-|      isSpot      | Whether the color book consists of spot color or process  |
-|                  | colors. This should be `true` for Lab and `false` for RGB |
-|                  | and CMYK. (I might remove this property altogether, and   |
-|                  | handle it internally.)                                    |
 |      colors      | And array of color records.                               |
 
 <!-- markdownlint-enable line-length -->

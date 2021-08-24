@@ -23,7 +23,6 @@ const schema: JTDSchemaType<ColorBook> = {
         },
       },
     },
-    isSpot: {type: 'boolean'},
   },
 };
 

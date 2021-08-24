@@ -29,7 +29,6 @@ export class AcbStreamDecoder extends Transform implements AcbStreamDecoder {
     pageKey: 0,
     colorModel: 'RGB',
     colors: [],
-    isSpot: false,
   };
   private colorCount = 0;
 
@@ -121,7 +120,13 @@ export class AcbStreamDecoder extends Transform implements AcbStreamDecoder {
   }
 
   private onSpotId(spotId: string) {
-    this.book.isSpot = spotId === 'spflspot';
+    if ((this.book.colorModel === 'Lab') !== (spotId === 'spflspot')) {
+      return this.emit(
+        'error',
+        new Error(`Lab color book without spot identifier`)
+      );
+    }
+
     this.emit('book', this.book);
   }
 
