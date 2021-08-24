@@ -16,5 +16,4 @@ export interface ColorBook {
   pageKey: number;
   colorModel: ColorModel;
   colors: Color[];
-  isSpot: boolean;
 }

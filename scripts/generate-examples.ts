@@ -22,7 +22,6 @@ function generateBook({
     colorNamePostfix: '',
     pageSize: 9,
     pageKey: 5,
-    isSpot: colorModel === 'Lab', // @TODO remove this property altogether
     colors: [...colors],
   };
 

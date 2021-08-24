@@ -58,5 +58,5 @@ export function* encodeAcb(book: ColorBook) {
     yield Chunk.fromComponents(color.components, book.colorModel);
   }
 
-  yield Chunk.fromAscii(book.isSpot ? 'spflspot' : 'spflproc');
+  yield Chunk.fromAscii(book.colorModel === 'Lab' ? 'spflspot' : 'spflproc');
 }
